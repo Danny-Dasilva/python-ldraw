@@ -50,12 +50,12 @@ The optional sky background colour is an SVG colour, either specified as
     parser.add_argument('--look_at_position', type=vector_position,
                         required=False, default=vector_position("0,0,0"))
     parser.add_argument('--sky')
-    parser.add_argument('--background_color')
+    background_color = '#ffffff'
 
     args = parser.parse_args()
     svg_args = SVGArgs(args.viewport_size[0],
                        args.viewport_size[1],
-                       background_colour=args.background_colour)
+                       background_colour=background_colour)
 
     ldr2svg(args.ldraw_file, args.svg_file,
             args.camera_position, args.look_at_position, svg_args)
