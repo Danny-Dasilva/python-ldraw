@@ -50,6 +50,7 @@ The optional sky background colour is an SVG colour, either specified as
     parser.add_argument('--look_at_position', type=vector_position,
                         required=False, default=vector_position("0,0,0"))
     parser.add_argument('--sky')
+    parser.add_argument('--background_color')
 
     args = parser.parse_args()
     svg_args = SVGArgs(args.viewport_size[0],
