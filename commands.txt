@@ -1,0 +1,2 @@
+python test.py > temp.ldr
+python3 ldr2svg.py temp.ldr temp.svg 320x240 100,100,100.0 --look_at_position 0,0,0

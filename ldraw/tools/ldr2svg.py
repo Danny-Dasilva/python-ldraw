@@ -55,7 +55,7 @@ The optional sky background colour is an SVG colour, either specified as
     args = parser.parse_args()
     svg_args = SVGArgs(args.viewport_size[0],
                        args.viewport_size[1],
-                       background_colour=background_colour)
+                       background_colour=background_color)
 
     ldr2svg(args.ldraw_file, args.svg_file,
             args.camera_position, args.look_at_position, svg_args)
