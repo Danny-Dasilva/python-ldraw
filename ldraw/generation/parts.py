@@ -28,8 +28,9 @@ def write_section_file(parts_dir, list_of_parts, mod_path):
     """ Writes a single section files"""
     list_of_parts.sort(key=lambda o: o['description'])
     part_str = pystache.render(PARTS_TEMPLATE, context={'parts': list_of_parts})
-    parts_py = os.path.join(parts_dir, mod_path)
+    parts_py = os.path.join(parts_dir, ".py")
     ensure_exists(os.path.dirname(parts_py))
+    print("ERROR", parts_py, parts_dir, mod_path, "error")
     with codecs.open(parts_py, 'w', encoding='utf-8') as generated_file:
         generated_file.write(part_str)
 

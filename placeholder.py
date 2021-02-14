@@ -7,5 +7,5 @@ from ldraw.pieces import Piece, Group
 rover = Group(Vector(0, 0, 0), Identity())
 
 r = Piece(White, Vector(0, 0, 0),
-          Identity(), "3023", rover)
+          Identity(), "44728", rover)
 print(r)

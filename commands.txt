@@ -1,2 +1,56 @@
 python test.py > temp.ldr
-python3 ldr2svg.py temp.ldr temp.svg 320x240 100,100,100.0 --look_at_position 0,0,0
+python3 ldr2svg.py temp.ldr temp.svg 320x240 100,100,100 --look_at_position 0,0,0
+
+./ldr2png.py temp.ldr temp.png 1920x1080 100,100,100  --stroke-colour '#000000'
+
+
+./ldr2svg.py temp.ldr temp.svg 320x240 100,100,100 --look_at_position 0,0,0
+
+
+
+./ldr2pov.py temp.ldr temp.pov 50,50,50 --look_at_position 0,0,0
+povray +Itemp.pov +FN16 +Otemp.png +Q6
+
+
+
+
+
+16 len
+33 len
+50 len
+67 len
+68 len
+86 len
+108 len
+125 len
+142 len
+159 len
+176 len
+177 len
+194 len
+211 len
+228 len
+245 len
+246 len
+247 len
+248 len
+
+16 len
+33 len
+50 len
+67 len
+68 len
+86 len
+108 len
+125 len
+142 len
+159 len
+176 len
+177 len
+194 len
+211 len
+228 len
+245 len
+246 len
+247 len
+248 len

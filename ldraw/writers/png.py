@@ -91,6 +91,7 @@ class PNGWriter(Writer):
     def _get_polygon(self, top_level_piece, colour, projections):
         rgb = self.parts.colours.get(colour, "#ffffff")
         alpha = self._opacity_from_colour(colour)
+        
         return [Polygon(projections, rgb, alpha)]
 
 

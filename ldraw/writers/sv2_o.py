@@ -83,7 +83,6 @@ class SVGArgs(object):
 def _project_polygons(width, height, polygons):
     # vx' = width + az
     # vy' = height + bz
-    print(len(polygons))
     pixel_x = 0.5
     pixel_y = 0.5
     half_width = width / 2.0
@@ -97,8 +96,6 @@ def _project_polygons(width, height, polygons):
             new_point = Vector2D(point_x, point_y)
             new_points.append(new_point)
         new_polygons.append((new_points, polygon))
-    print(len(new_polygons))
-
     return new_polygons
 
 
@@ -111,10 +108,6 @@ def write_preamble(args, svg_file):
                      args.width, args.height, 0.0, args.height)
         svg_file.write(POLYGON_FORMAT % arguments)
 
-class Test(Writer):
-    def write(self, model, svg_file, svg_args): 
-        polygons = self._polygons_from_objects(model)
-        print(len(polygons))
 
 class SVGWriter(Writer):
     """Writes a model into a SVG"""
@@ -125,7 +118,6 @@ class SVGWriter(Writer):
         polygons = self._polygons_from_objects(model)
         polygons.sort()
         shapes = _project_polygons(svg_args.width, svg_args.height, polygons)
-        
         self._write(shapes, svg_file, svg_args)
 
     def _write(self, shapes, svg_file, args):
@@ -159,16 +151,12 @@ class SVGWriter(Writer):
                        top_level_piece,
                        current):
         camera_position = self.camera_position
-        
 
         points = [current.matrix * p + current.position - camera_position for p in obj.points]
     
-        return self._common_get_poly(obj, top_level_piece, current.colour, points,is_svg=True)
+        return self._common_get_poly(obj, top_level_piece, current.colour, points)
 
- 
-        
     def _get_polygon(self, top_level_piece, colour, projections):  # pylint: disable=no-self-use
-        
         return [Polygon(min(p.z for p in projections),
                         projections,
                         colour, top_level_piece)]

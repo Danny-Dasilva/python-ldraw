@@ -31,6 +31,8 @@ class Writer(object):
         self.camera_position = camera_position
         self.system = system
         self.parts = parts
+        self.r_list = []
+        self.count = 0 
 
     def _opacity_from_colour(self, colour):
         return self.parts.alpha_values.get(colour, 255) / 255.0
@@ -41,29 +43,34 @@ class Writer(object):
                                current=Current(Identity(), White.code, Vector(0, 0, 0))):
         # Extract polygons from objects, filtering out those behind the camera.
         polygons = []
-
+        
         poly_handlers = {
             Piece: self._subpart_get_poly,
             Line: self._line_get_poly,
             Triangle: self._triangle_get_poly,
             Quadrilateral: self._quadrilateral_get_poly,
         }
-
+        
         for obj in model.objects:
+            
             if isinstance(obj, Piece) and obj.part == "LIGHT":
                 continue
             try:
                 args = (obj,
                         top_level_piece or obj,
                         current)
+                        
                 poly = poly_handlers[type(obj)](*args)
+               
             except KeyError:
                 continue
+            
             if poly:
                 polygons.extend(poly)
             else:
                 continue
-
+        # print(len(polygons), "poly len")
+        # print(len(self.r_list), "len")
         return polygons
 
     def _line_get_poly(self,
@@ -98,15 +105,20 @@ class Writer(object):
         points = [current.matrix * p + current.position - camera_position for p in obj.points]
         if abs((points[2] - points[0]).cross(points[1] - points[0])) == 0:
             return False
-
+        
         return self._common_get_poly(obj, top_level_piece, current.colour, points)
 
     def _common_get_poly(self,
                          obj,
                          top_level_piece,
                          current_colour,
-                         points):
+                         points, is_svg=False):
+        
         projections = [self.system.project(p) for p in points]
+        # if is_svg:
+        #     print(*projections)
+        #     if any(p.z <= -90 for p in projections):
+        #         return False
         if any(p.z >= 0 for p in projections):
             return False
         colour = _current_colour(obj.colour, current_colour)
@@ -117,6 +129,7 @@ class Writer(object):
                                 obj,
                                 top_level_piece,
                                 current):
+        
         camera_position = self.camera_position
 
         points = [current.matrix * p + current.position - camera_position for p in obj.points]
@@ -125,6 +138,8 @@ class Writer(object):
             return False
         if abs((points[2] - points[0]).cross(points[3] - points[0])) == 0:
             return False
+        
+        
 
         return self._common_get_poly(obj, top_level_piece, current.colour, points)
 
