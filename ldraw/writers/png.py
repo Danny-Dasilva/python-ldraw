@@ -74,18 +74,21 @@ class PNGWriter(Writer):
         depth = numpy.empty((image_size[0], image_size[1]), "f")
         depth[:] = 1 << 32 - 1
         polygons = self._polygons_from_objects(model)
-
         viewport_scale = min(float(image_size[0]), float(image_size[1]))
         # Draw opaque polygons first.
+        example = []
         for polygon in polygons:
             if polygon.alpha == 1.0:
                 polygon.project(distance)
+                hold = [{"x":val.x, "y":val.y, "z":val.z} for val in polygon.points]
+                example.append(hold)
                 polygon.render(image, depth, viewport_scale, stroke_colour)
         # Draw translucent polygons last.
         for polygon in polygons:
             if polygon.alpha < 1.0:
                 polygon.project(distance)
                 polygon.render(image, depth, viewport_scale, stroke_colour)
+        breakpoint()
         image.save(png_path)
 
     def _get_polygon(self, top_level_piece, colour, projections):
@@ -124,6 +127,7 @@ class Polygon(object):
         Sort the edges of the polygon by their minimum projected y
         coordinates, discarding horizontal edges.
         """
+        print(image, viewport_scale)
         edges = self.get_edges(image, viewport_scale)
         if not edges:
             return

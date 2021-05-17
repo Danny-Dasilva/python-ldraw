@@ -8,7 +8,7 @@ python3 ldr2svg.py temp.ldr temp.svg 320x240 100,100,100 --look_at_position 0,0,
 
 
 
-./ldr2pov.py temp.ldr temp.pov 50,50,50 --look_at_position 0,0,0
+./ldr2pov.py temp.ldr temp.pov 100,100,100 --look_at_position 0,0,0
 povray +Itemp.pov +FN16 +Otemp.png +Q6
 
 

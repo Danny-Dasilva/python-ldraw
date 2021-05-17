@@ -60,7 +60,7 @@ The optional sky background and stroke colours are PNG colours, either specified
     args = parser.parse_args()
 
     png_args = PNGArgs(args.distance, args.image_size, args.stroke_colour, args.sky)
-    test = vector_position('100,-100, 100')
+    test = vector_position('100, 100, -100')
     args.camera_position = test
     ldr2png(args.ldraw_file, args.png_file, args.look_at_position, args.camera_position, png_args)
 
@@ -70,9 +70,9 @@ def ldr2png(ldraw_path, png_path, look_at_position, camera_position, png_args):
     verify_camera_look_at(camera_position, look_at_position)
    
     model, parts = get_model(ldraw_path)
-    
+
     system = get_coordinate_system(camera_position, look_at_position)
-    print(camera_position)
+    
     writer = PNGWriter(camera_position, system, parts)
     writer.write(model, png_path, png_args)
 

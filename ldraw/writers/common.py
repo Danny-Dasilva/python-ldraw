@@ -59,7 +59,7 @@ class Writer(object):
                 args = (obj,
                         top_level_piece or obj,
                         current)
-                        
+                
                 poly = poly_handlers[type(obj)](*args)
                
             except KeyError:
@@ -71,6 +71,8 @@ class Writer(object):
                 continue
         # print(len(polygons), "poly len")
         # print(len(self.r_list), "len")
+
+    
         return polygons
 
     def _line_get_poly(self,

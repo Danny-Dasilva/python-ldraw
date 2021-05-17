@@ -97,8 +97,7 @@ def _project_polygons(width, height, polygons):
             new_point = Vector2D(point_x, point_y)
             new_points.append(new_point)
         new_polygons.append((new_points, polygon))
-    print(len(new_polygons))
-
+    breakpoint()
     return new_polygons
 
 
@@ -130,7 +129,8 @@ class SVGWriter(Writer):
 
     def _write(self, shapes, svg_file, args):
         stroke_width = args.stroke_width if args.stroke_width else "0.1%"
-
+        print(stroke_width, 'width')
+       
         write_preamble(args, svg_file)
 
         shift = Vector2D(args.width / 2.0, args.height / 2.0)
