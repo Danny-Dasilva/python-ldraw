@@ -10,3 +10,4 @@ tmp/
 ldraw/library/
 dist/
 Pipfile.lock
+./svg3d

@@ -97,7 +97,7 @@ def _project_polygons(width, height, polygons):
             new_point = Vector2D(point_x, point_y)
             new_points.append(new_point)
         new_polygons.append((new_points, polygon))
-    breakpoint()
+    
     return new_polygons
 
 
