@@ -21,8 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ldraw.geometry import Vector2D
 from ldraw.writers.common import Writer
-
-
+from svg3d.svg3d import svg as svg3d
+import numpy as np
+import numpy, pyrr, math
 class Polygon(object):
     """Polygon used for SVG rendering"""
 
@@ -79,7 +80,6 @@ class SVGArgs(object):
         self.stroke_width = stroke_width
         self.background_colour = background_colour
 
-
 def _project_polygons(width, height, polygons):
     # vx' = width + az
     # vy' = height + bz
@@ -94,6 +94,26 @@ def _project_polygons(width, height, polygons):
         for point in polygon.points:
             point_x = half_width * (point.x / (half_width + pixel_x * -point.z))
             point_y = half_height * (point.y / (half_height + pixel_y * -point.z))
+            new_point = Vector2D(point_x, point_y)
+            new_points.append(new_point)
+        new_polygons.append((new_points, polygon))
+    
+    return new_polygons
+
+def project_polygons(width, height, polygons):
+    # vx' = width + az
+    # vy' = height + bz
+    print(len(polygons))
+    pixel_x = 0.5
+    pixel_y = 0.5
+    half_width = width / 2.0
+    half_height = height / 2.0
+    new_polygons = []
+    for polygon in polygons:
+        new_points = []
+        for point in polygon:
+            point_x = half_width * (point["x"] / (half_width + pixel_x * -point["z"]))
+            point_y = half_height * (point["y"] / (half_height + pixel_y * -point["z"]))
             new_point = Vector2D(point_x, point_y)
             new_points.append(new_point)
         new_polygons.append((new_points, polygon))
@@ -122,30 +142,93 @@ class SVGWriter(Writer):
     def write(self, model, svg_file, svg_args):
         """Writes the SVG """
         polygons = self._polygons_from_objects(model)
-        polygons.sort()
-        shapes = _project_polygons(svg_args.width, svg_args.height, polygons)
+        polys  = []
+        for polygon in polygons:
+            
+
+            empty = None
+            # if len(polygon.points) >= 2:
+            for points in polygon.points:
+                r = [points.x, points.y, points.z]
+                f = np.array([r])
+                if empty is None:
+                    empty = f
+                else:
+                    empty = np.append(empty,f, axis=0)
+            polys.append(empty * .1)
+        
+        vertices = np.concatenate(polys, axis=0)
+        face_idxs = np.concatenate([np.ones(poly.shape[0]) * i for i, poly in enumerate(polys)], axis=0)
+        def generate_svg(filename):
+            view = pyrr.matrix44.create_look_at(
+                eye=[100, -100, -100], target=[0, 0, 0], up=[0, -1, 0]
+            )
+            projection = pyrr.matrix44.create_perspective_projection(
+                fovy=15, aspect=1, near=10, far=200
+            )
+            camera = svg3d.Camera(view, projection)
+
+            style = dict(
+                fill="white",
+                fill_opacity="0.75",
+                stroke="black",
+                stroke_linejoin="round",
+                stroke_width="0.0005",
+            )
+
+            mesh = svg3d.Mesh(num_faces=len(polys), faces=vertices, face_idxs=face_idxs, style=style)
+            view = svg3d.View(camera, svg3d.Scene([mesh]))
+            return svg3d.Engine([view]).pull(filename)
+
+
+        polygons = generate_svg("yeet.svg")
+
+
+
+
+
+
+
+
+
+
+        # polygons = 
+    
+        # polygons.sort()
+        shapes = project_polygons(svg_args.width, svg_args.height, polygons)
         
         self._write(shapes, svg_file, svg_args)
 
+   
+
+
     def _write(self, shapes, svg_file, args):
-        stroke_width = args.stroke_width if args.stroke_width else "0.1%"
+        stroke_width = args.stroke_width if args.stroke_width else "0.05%"
         print(stroke_width, 'width')
        
         write_preamble(args, svg_file)
 
         shift = Vector2D(args.width / 2.0, args.height / 2.0)
         for points, polygon in shapes:
-            rgb = self.parts.colours.get(polygon.colour, "#ffffff")
-            stroke_colour = args.stroke_colour if args.stroke_colour else rgb
+            # rgb = self.parts.colours.get(polygon.colour, "#ffffff")
+            rgb = "#ff0000"
+            # stroke_colour = args.stroke_colour if args.stroke_colour else 
+            stroke_colour = "#000"
             context = dict(rgb=rgb,
+                           stroke_width="0.0001%",
+                           stroke_colour=stroke_colour,
+                        #    opacity=self._opacity_from_colour(polygon.colour))
+                        opacity=self._opacity_from_colour(rgb))
+
+            cncnc = dict(rgb=stroke_colour,
                            stroke_width=stroke_width,
                            stroke_colour=stroke_colour,
-                           opacity=self._opacity_from_colour(polygon.colour))
+                        opacity=self._opacity_from_colour(rgb))
             if len(points) == 2:
-                context['point1'] = Vector2D(points[0].x, -points[0].y) + shift
-                context['point2'] = Vector2D(points[1].x, -points[1].y) + shift
+                cncnc['point1'] = Vector2D(points[0].x, -points[0].y) + shift
+                cncnc['point2'] = Vector2D(points[1].x, -points[1].y) + shift
 
-                svg_file.write(SVG_LINE.format(**context))
+                svg_file.write(SVG_LINE.format(**cncnc))
             else:
                 svg_file.write(SVG_POLYGON_PREAMBLE.format(**context))
                 for point in points:

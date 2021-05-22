@@ -56,7 +56,7 @@ The optional sky background colour is an SVG colour, either specified as
         required=False,
         default=vector_position("0,0,0"),
     )
-    test = vector_position('100, -100, -100')
+    test = vector_position('-100, 0, 0')
     
     parser.add_argument("--sky")
     background_colour = "#ffffff"
